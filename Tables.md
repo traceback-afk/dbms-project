@@ -1,8 +1,8 @@
 ```sql
 CREATE TABLE Train (
     train_id INT PRIMARY KEY,
-    train_name VARCHAR(50) NOT NULL,
-    train_type VARCHAR(20),
+    name VARCHAR(50) NOT NULL,
+    type VARCHAR(20),
     total_coaches INT,
     year_built SMALLINT,
     last_maintained DATE,
@@ -12,7 +12,7 @@ CREATE TABLE Train (
 CREATE TABLE Coach (
     coach_id INT PRIMARY KEY,
     train_id INT NOT NULL,
-    coach_type VARCHAR(20), -- Sleeper / AC / General
+    type VARCHAR(20), -- Sleeper / AC / General
     capacity INT,
     FOREIGN KEY (train_id) REFERENCES Train(train_id)
 );
@@ -20,14 +20,15 @@ CREATE TABLE Coach (
 CREATE TABLE Seat (
     seat_id INT PRIMARY KEY,
     coach_id INT NOT NULL,
-    seat_number VARCHAR(5),
+    number VARCHAR(5),
     class VARCHAR(20),
+    is_booked BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (coach_id) REFERENCES Coach(coach_id)
 );
 
 CREATE TABLE Station (
     station_id INT PRIMARY KEY,
-    station_name VARCHAR(50) NOT NULL,
+    name VARCHAR(50) NOT NULL,
     city VARCHAR(50),
     state VARCHAR(50),
     latitude DECIMAL(9,6),
@@ -68,7 +69,7 @@ CREATE TABLE Schedule (
 CREATE TABLE Passenger (
     passenger_id INT PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
-    dob DATE,
+    date_of_birth DATE,
     phone VARCHAR(15),
     email VARCHAR(50)
 );
@@ -78,13 +79,13 @@ CREATE TABLE Booking (
     pnr VARCHAR(10) UNIQUE,
     train_id INT NOT NULL,
     passenger_id INT NOT NULL,
-    booking_date DATE,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     travel_date DATE,
     from_station_id INT NOT NULL,
     to_station_id INT NOT NULL,
     seat_id INT,
     coach_id INT,
-    booking_status VARCHAR(20) DEFAULT 'Confirmed', -- Confirmed / Cancelled
+    status VARCHAR(20) DEFAULT 'Confirmed', -- Confirmed / Cancelled
     FOREIGN KEY (train_id) REFERENCES Train(train_id),
     FOREIGN KEY (passenger_id) REFERENCES Passenger(passenger_id),
     FOREIGN KEY (from_station_id) REFERENCES Station(station_id),
@@ -93,12 +94,21 @@ CREATE TABLE Booking (
     FOREIGN KEY (coach_id) REFERENCES Coach(coach_id)
 );
 
+CREATE TABLE BookingSeats (
+    booking_id INT NOT NULL,
+    seat_id INT NOT NULL,
+    PRIMARY KEY (booking_id, seat_id),
+    FOREIGN KEY (booking_id) REFERENCES Booking(booking_id) ON DELETE CASCADE,
+    FOREIGN KEY (seat_id) REFERENCES Seat(seat_id) ON DELETE CASCADE
+);
+
 CREATE TABLE Driver (
     driver_id INT PRIMARY KEY,
     name VARCHAR(50),
     phone VARCHAR(15),
     license_number VARCHAR(20),
-    experience_years INT
+    experience_years INT,
+    salary DECIMAL(10,2)
 );
 
 CREATE TABLE TrainDriver (
@@ -113,17 +123,17 @@ CREATE TABLE Payment (
     payment_id INT PRIMARY KEY,
     booking_id INT NOT NULL,
     amount DECIMAL(10,2),
-    payment_method VARCHAR(20), -- Card / Cash / Online
-    payment_status VARCHAR(20) DEFAULT 'Paid',
+    method VARCHAR(20), -- Card / Cash / Online
+    status VARCHAR(20) DEFAULT 'Paid',
     FOREIGN KEY (booking_id) REFERENCES Booking(booking_id)
 );
 
 CREATE TABLE Maintenance (
     maintenance_id INT PRIMARY KEY,
     train_id INT NOT NULL,
-    maintenance_date DATE,
-    maintenance_type VARCHAR(50),
-    technician VARCHAR(50),
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    type VARCHAR(50),
+    technician_name VARCHAR(50),
     FOREIGN KEY (train_id) REFERENCES Train(train_id)
 );
 
@@ -131,8 +141,10 @@ CREATE TABLE IncidentLog (
     incident_id INT PRIMARY KEY,
     train_id INT,
     station_id INT,
-    incident_time DATETIME,
+    time DATETIME,
     description TEXT,
+    latitude DECIMAL(9,6),
+    longitude DECIMAL(9,6),
     FOREIGN KEY (train_id) REFERENCES Train(train_id),
     FOREIGN KEY (station_id) REFERENCES Station(station_id)
 );
