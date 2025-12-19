@@ -79,19 +79,15 @@ CREATE TABLE Booking (
     pnr VARCHAR(10) UNIQUE,
     train_id INT NOT NULL,
     passenger_id INT NOT NULL,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    booking_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     travel_date DATE,
     from_station_id INT NOT NULL,
     to_station_id INT NOT NULL,
-    seat_id INT,
-    coach_id INT,
     status VARCHAR(20) DEFAULT 'Confirmed', -- Confirmed / Cancelled
     FOREIGN KEY (train_id) REFERENCES Train(train_id),
     FOREIGN KEY (passenger_id) REFERENCES Passenger(passenger_id),
     FOREIGN KEY (from_station_id) REFERENCES Station(station_id),
     FOREIGN KEY (to_station_id) REFERENCES Station(station_id),
-    FOREIGN KEY (seat_id) REFERENCES Seat(seat_id),
-    FOREIGN KEY (coach_id) REFERENCES Coach(coach_id)
 );
 
 CREATE TABLE BookingSeat (
@@ -140,7 +136,7 @@ CREATE TABLE Maintenance (
 CREATE TABLE IncidentLog (
     incident_id INT PRIMARY KEY,
     train_id INT,
-    time DATETIME,
+    incident_time DATETIME,
     description TEXT,
     latitude DECIMAL(9,6),
     longitude DECIMAL(9,6),
