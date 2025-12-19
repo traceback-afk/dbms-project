@@ -20,7 +20,7 @@ CREATE TABLE Coach (
 CREATE TABLE Seat (
     seat_id INT PRIMARY KEY,
     coach_id INT NOT NULL,
-    number VARCHAR(5),
+    seat_no VARCHAR(5),
     class VARCHAR(20),
     is_booked BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (coach_id) REFERENCES Coach(coach_id)
@@ -94,7 +94,7 @@ CREATE TABLE Booking (
     FOREIGN KEY (coach_id) REFERENCES Coach(coach_id)
 );
 
-CREATE TABLE BookingSeats (
+CREATE TABLE BookingSeat (
     booking_id INT NOT NULL,
     seat_id INT NOT NULL,
     PRIMARY KEY (booking_id, seat_id),
@@ -140,13 +140,11 @@ CREATE TABLE Maintenance (
 CREATE TABLE IncidentLog (
     incident_id INT PRIMARY KEY,
     train_id INT,
-    station_id INT,
     time DATETIME,
     description TEXT,
     latitude DECIMAL(9,6),
     longitude DECIMAL(9,6),
     FOREIGN KEY (train_id) REFERENCES Train(train_id),
-    FOREIGN KEY (station_id) REFERENCES Station(station_id)
 );
 
 ```
