@@ -91,9 +91,9 @@ CREATE TABLE Booking (
 );
 
 CREATE TABLE BookingSeat (
-    booking_id INT NOT NULL,
+    booking_seat_id INT PRIMARY KEY,
     seat_id INT NOT NULL,
-    PRIMARY KEY (booking_id, seat_id),
+    booking_id INT NOT NULL,
     FOREIGN KEY (booking_id) REFERENCES Booking(booking_id) ON DELETE CASCADE,
     FOREIGN KEY (seat_id) REFERENCES Seat(seat_id) ON DELETE CASCADE
 );
@@ -108,9 +108,9 @@ CREATE TABLE Driver (
 );
 
 CREATE TABLE TrainDriver (
+    train_driver_id INT PRIMARY KEY,
     train_id INT,
     driver_id INT,
-    PRIMARY KEY (train_id, driver_id),
     FOREIGN KEY (train_id) REFERENCES Train(train_id),
     FOREIGN KEY (driver_id) REFERENCES Driver(driver_id)
 );
@@ -127,7 +127,7 @@ CREATE TABLE Payment (
 CREATE TABLE Maintenance (
     maintenance_id INT PRIMARY KEY,
     train_id INT NOT NULL,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    maintenance_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     type VARCHAR(50),
     technician_name VARCHAR(50),
     FOREIGN KEY (train_id) REFERENCES Train(train_id)
